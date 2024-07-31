@@ -1,0 +1,5 @@
+HOW TO RUN THIS PROJECT:
+- go to the directory of this folder in cmd or terminal of your project
+- from cmd run: python app.py
+- go to http://127.0.0.1:5000 in your browser and view the project
+- search for a movie. 
