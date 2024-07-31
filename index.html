@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title> 
+    <style>
+        
+        body {
+            font-family: 'Netflix Sans', Arial, sans-serif;
+            margin: 20px;
+            background-color: #141414;
+            color: #ffffff;
+        }
+
+        h1 {
+            color: #e50914;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b8b8b8;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 300px;
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #555555;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #e50914;
+        }
+
+        select {
+            width: 320px;
+            height: 300px;
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #555555;
+        }
+
+        select option {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 300px;
+        }
+
+        select {
+            width: 320px;
+            height: 300px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .book-card {
+            width: 200px;
+            margin: 10px;
+            background-color: #333333;
+            padding: 10px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .book-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Recommendation System</h1>
+
+    <label for="movieInput">What is your favorite movie?</label>
+    <input type="text" id="movieInput" placeholder="Enter movie name">
+
+    <button onclick="getRecommendations()">Get Recommendations</button>
+
+    <label for="bookList">Recommended Books:</label>
+    <div id="bookList" class="flex-container"></div>
+    </select>
+
+    <script>
+        function getRecommendations() {
+            var movieInput = document.getElementById('movieInput').value;
+        
+            fetch('/get_recommendations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'movie_name=' + encodeURIComponent(movieInput),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var bookList = document.getElementById('bookList');
+                bookList.innerHTML = '';
+                
+                data.forEach(function(bookTitle) {
+                    // Create a flexbox item for each recommended book
+                    var bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+        
+                    // Create a default image (replace ' jpg' with   actual default image path)
+                    var bookImage = document.createElement('img');
+                    bookImage.className = 'book-image';
+                    bookImage.src = 'templates/img.jpg';
+                    bookImage.alt = ' ';
+        
+                    // Create a title paragraph
+                    var titleParagraph = document.createElement('p');
+                    titleParagraph.textContent = bookTitle;
+        
+                    // Append elements to the flexbox item
+                    bookCard.appendChild(bookImage);
+                    bookCard.appendChild(titleParagraph);
+        
+                    // Append the flexbox item to the flex container
+                    bookList.appendChild(bookCard);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function showMovieInfo() {
+            var selectedMovie = document.getElementById('movieList').value;
+    
+            // Get additional information about the selected movie using another fetch request
+            fetch('/get_movie_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'movie_name=' + encodeURIComponent(selectedMovie),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var movieInfoDiv = document.getElementById('movieInfo');
+                movieInfoDiv.innerHTML = '<h2>' + selectedMovie + '</h2>';
+                movieInfoDiv.innerHTML += '<p>Genres: ' + data.genres + '</p>';
+                movieInfoDiv.innerHTML += '<p>Keywords: ' + data.keywords + '</p>';
+                // Add more information as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
